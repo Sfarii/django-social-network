@@ -1,20 +1,38 @@
-Welcome to social network documentation!
+Social network documentation!
 ========================================
 
-# Setup
-Instructions to get your environment set up and to start coding!
+This structure is based on research and own experience of developing Django apps.
 
-# Development
-Instructions to start developing.
+# Requirements
+python 3.5 or higher;
 
-# Deployment
-Instructions to deploy.
+# Installation
+Creating an isolated Python environment.
 
-# Production
-Instructions to test production.
+Create a project folder and a venv folder within:
 
-# Testing
-Instructions to run unit and functional tests.
+```shell
+$ python3 -m venv venv
+```
+# Install dependencies
+Now, you will need to set up virtual environment that will keep the application and its dependencies isolated from the main system.
 
-# Architecture
-High-level overview of how this app is structured.
+Next run the following command with the name of your temporary virtual environment.
+
+```shell 
+$ source venv/bin/activate
+```
+
+Now, run following command to install Flask dependency inside it:
+
+```shell
+$ pip install -r requirements/base.txt
+```
+
+# Usage
+
+Run this command to run the built-in web server and access the application in your browser at http://localhost:8000:
+
+```shell
+$ python3 manage.py runserver
+```
