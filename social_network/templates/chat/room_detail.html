@@ -1,0 +1,145 @@
+{% extends "chat/base.html" %}
+{% load i18n user_tags static form_renderer %}
+
+{% block title %}{% trans "Room" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-10 text-center">
+    <h1 class="display-3 text-white">{% trans "Start a conversation" %}</h1>
+    <h3 class="text-white">{% trans "Nothing trumps good conversation" %}</h3>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row flex-row chat">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header d-inline-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-9">
+                            <div class="media">
+                                <img alt="Image" src="{{ current_room.avatar.url }}" class="avatar shadow">
+                                <div class="media-body">
+                                    <h6 class="mb-0 d-block">{{ current_room.name }}</h6>
+                                    <span class="text-muted text-small">{{ current_room.created|date }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            {% if user.pk == current_room.created_by.pk %}
+                            <a href="{% url 'delete_room' slug=current_room.slug %}" role="button"
+                               class="btn btn-sm btn-danger btn-icon">
+                                <span class="btn-inner--icon icon-big text-white"><i class="ni ni-basket"></i></span>
+                                <span class="btn-inner--text text-white">{% trans "Delete" %}</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body chat-body" id="js-message-log">
+
+                    {% if page_obj.has_next %}
+                        <div class="row mt-4">
+                                <div class="col-md-12 text-center">
+                                    <a href="?page={{ page_obj.next_page_number }}" class="text-primary"><u>{% trans "View the new messages" %}</u></a>
+                                </div>
+                            </div>
+                    {% endif %}
+
+                    {% for message in message_list %}
+                        {% if message.sender.pk == user.pk %}
+                        <div class="message me">
+                            <div class="text-main">
+                                <div class="text-group me">
+                                    <div class="text me">
+                                        <p>{{ message.body }}</p>
+                                    </div>
+                                </div>
+                                <span><i class="ni ni-check-bold"></i> {{ message.created|date:'b. d, Y H:i:s' }}</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="message">
+                            <img class="avatar-md" src="{% user_avatar message.sender %}" data-toggle="tooltip"
+                                 data-placement="top" title="" alt="avatar"
+                                 data-original-title="{{ message.sender.get_full_name }}">
+                            <div class="text-main">
+                                <div class="text-group">
+                                    <div class="text">
+                                        <p>{{ message.body }}</p>
+                                    </div>
+                                </div>
+                                <span>{{ message.created|date:'b. d, Y H:i:s' }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                    <div class="center-items" id="js-message-empty">
+                        <img alt="Image placeholder" class="col-8" src="{% static 'img/ill/peaking.svg' %}">
+                    </div>
+                    {% endfor %}
+
+                    {% if page_obj.has_previous %}
+                        <div class="row mb-4">
+                                <div class="col-md-12 text-center">
+                                    <a href="?page={{ page_obj.previous_page_number }}" class="text-primary"><u>{% trans "View the old messages" %}</u></a>
+                                </div>
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer d-block">
+                    <div class="media align-items-center">
+                        <img alt="Image placeholder" class="avatar avatar-lg rounded-circle"
+                             src="{% user_avatar user size=180 %}">
+                        <div class="media-body">
+                            <div class="form-group align-items-center">
+                                <div class="input-group input-group-alternative">
+                                    <input name="body" placeholder="{% trans 'Write a message ...' %}"
+                                           id="js-chat-message-input" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-footer">
+                            <button type="button" id="js-chat-message-submit" class="btn btn-primary btn-block"><i
+                                    class="ni ni-send"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="list-group list-group-chat list-group-flush" id="js-participant-log">
+                    {% for participant in current_room.participants.all %}
+                    <a href="javascript:;" id="js-participant-{{ participant.pk }}" class="list-group-item active mb-2">
+                        <div class="media">
+                            <img alt="Image" src="{% user_avatar participant %}" class="avatar">
+                            <div class="media-body ml-2">
+                                <div class="justify-content-between align-items-center">
+                                    <h6 class="mb-0 text-white">{{ participant.get_full_name }}
+                                        <span class="badge badge-{% if participant.is_active %}success{% else %}danger{% endif %}"></span>
+                                    </h6>
+                                    <div>
+                                        <small>{{ participant.username }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'js/chat.min.js' %}"></script>
+<script type="text/javascript">
+    new ChatSocket($(document), '{{ current_room.slug }}', '{{ user.username }}');
+</script>
+{% endblock %}

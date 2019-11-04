@@ -1,0 +1,18 @@
+{% load i18n %}
+<ul class="nav-group pt-2">
+    <li class="nav-group-item">
+        <a class="nav-link active" href="{% url 'edit_profile' %}">
+            {% trans "General information" %}
+        </a>
+    </li>
+    <li class="nav-group-item">
+        <a class="nav-link" href="{% url 'edit_account' %}">
+            {% trans "Account" %}
+        </a>
+    </li>
+    <li class="nav-group-item">
+        <a class="nav-link" href="{% url 'edit_password' %}">
+            {% trans "Security" %}
+        </a>
+    </li>
+</ul>

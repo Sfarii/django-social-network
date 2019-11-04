@@ -1,0 +1,52 @@
+{% extends "authentication/base.html" %}
+{% load i18n static form_renderer %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class="center-row mt--300">
+    <div class="col-lg-6">
+        {% form_error form %}
+
+        {% if user.is_authenticated %}
+        <div class="alert alert-info" role="alert">
+            {% blocktrans with username=user.username %}
+            You are authenticated as {{ username }}, but are not authorized to
+            access this page. Would you like to login to a different account?
+            {% endblocktrans %}
+        </div>
+        {% endif %}
+
+        <div class="card bg-secondary shadow border-0">
+            <div class="card-header bg-white">
+                {% trans "Sign In" %}
+            </div>
+            <div class="card-body px-lg-5 py-lg-4">
+
+                {% form_start 'login' %}
+
+                {% form_field_without_label form.username 'ni ni-circle-08' %}
+
+                {% form_field_without_label form.password 'ni ni-lock-circle-open' %}
+
+                {% form_button 'Log in' 'btn btn-block btn-primary my-4' %}
+
+                {% form_end %}
+
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-8">
+                <a href="{% url 'password_reset' %}" class="text-light">
+                    <small>{% trans 'Forgotten your password or username?' %}</small>
+                </a>
+            </div>
+            <div class="col-4 text-right">
+                <a href="{% url 'register' %}" class="text-light">
+                    <small>{% trans 'Create new account ?' %}</small>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

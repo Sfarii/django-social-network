@@ -1,0 +1,72 @@
+{% extends "account/base.html" %}
+{% load i18n user_tags static form_renderer %}
+
+{% block title %}{% trans "Account Settings" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-8 text-center">
+    <h1 class="display-3 text-white">{% trans "Account Settings" %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="px-4">
+    <div class="section mt-2">
+        {% form_start 'edit_account' %}
+
+        {% form_error form %}
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="col-12">
+                    <div class="text-center">
+                        <div class="fileinput fileinput-new js-input-file text-center">
+                            <div class="fileinput-new thumbnail img-circle img-raised">
+                                <img id="fileinput-preview-id_avatar" class="js-input-preview"
+                                     src="{% user_avatar user size=180 %}" alt="...">
+                            </div>
+                            <div class="fileinput-preview fileinput-exists thumbnail img-circle img-raised"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-wrapper pt-5">
+                    <div class="progress-info">
+                        <div class="progress-label">
+                            <span>{% trans "Profile Completion" %}</span>
+                        </div>
+                        <div class="progress-percentage">
+                            <span>{% user_profile_completion user.profile %}%</span>
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-default" role="progressbar"
+                             aria-valuenow="{% user_profile_completion object %}"
+                             aria-valuemin="0"
+                             aria-valuemax="100" style="width: {% user_profile_completion user.profile %}%;"></div>
+                    </div>
+                </div>
+
+                {% include 'includes/_edit_account_navigation.html' %}
+            </div>
+            <div class="col-md-8 ml-auto">
+
+                {% form_field form.first_name %}
+
+                {% form_field form.last_name %}
+
+                {% form_field form.email %}
+
+                {% form_field form.username %}
+
+                {% form_field form.old_password %}
+
+                {% form_button 'Save changes' 'btn btn-primary mt-4' %}
+                {% form_button 'Cancel' 'btn btn-danger mt-4' 'reset' %}
+            </div>
+        </div>
+
+        {% form_end %}
+    </div>
+</div>
+{% endblock %}

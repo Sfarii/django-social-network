@@ -1,0 +1,64 @@
+{% extends "blog/base.html" %}
+{% load i18n static user_tags paginator_renderer %}
+
+{% block title %}{% trans "Posts" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-8 text-center">
+    <h1 class="display-3 text-white">{% trans "Share your thoughts or photos" %}</h1>
+    <h3 class="text-white">{% trans "What you think matter" %}</h3>
+    <div class="row pt-4">
+        <div class="col-lg-8">
+            <form action="{% url 'post_index' %}">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text input-group-text-search">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <input type="text" name="search" placeholder="Search for a post" class="form-control form-search">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <div class="btn-wrapper">
+                <a href="{% url 'post_create' %}" class="btn btn-info btn-icon">
+                    <span class="btn-inner--icon"><i class="ni ni-ruler-pencil"></i></span>
+                    <span class="btn-inner--text">{% trans "Create a post" %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% for post in post_list %}
+    {% include 'includes/_post.html' %}
+    <hr>
+{% empty %}
+    <div class="card card-lift--hover shadow border-0">
+        <div class="card-body text-center">
+            <img class="col-3" src="{% static 'img/ill/no-post.svg' %}">
+            <h3 class="pt-4">{% trans "Oops! No Posts Yet" %}</h3>
+        </div>
+    </div>
+{% endfor %}
+
+{% if post_list.count > 0 %}
+    <div class="col-12">
+        {% paginator_render page_obj %}
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'js/post.min.js' %}"></script>
+<script type="text/javascript">
+    new PostSocket($(document));
+</script>
+{% endblock %}

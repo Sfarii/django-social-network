@@ -1,0 +1,45 @@
+{% extends "blog/base.html" %}
+{% load i18n user_tags form_renderer %}
+
+{% block title %}{% trans "Update Post" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-10 text-center">
+    <h1 class="display-3 text-white">{% trans "Update Your Post" %}</h1>
+    <h3 class="text-white">{% trans "Express your thoughts" %}</h3>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <h5 class="h3 mb-0">{{ post.title }}</h5>
+            </div>
+            <div class="col-4 text-right ml-auto">
+                <a href="{% url 'post_delete' post=post.slug year=post.published|date:'Y' month=post.published|date:'m' day=post.published|date:'d' %}" role="button" class="btn btn-sm btn-danger btn-icon">
+                    <span class="btn-inner--icon icon-big text-white"><i class="ni ni-basket"></i></span>
+                    <span class="btn-inner--text text-white">{% trans "Delete" %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% form_start 'post_update' post=post.slug year=post.published|date:'Y' month=post.published|date:'m' day=post.published|date:'d' %}
+
+        {% form_error form %}
+
+        {% file_form_field form.cover %}
+
+        {% form_field form.title %}
+
+        {% form_field form.status %}
+
+        {% form_field form.body %}
+
+        {% form_button 'Save changes' 'btn btn-primary mt-4' %}
+        {% form_button 'Cancel' 'btn btn-danger mt-4' 'reset' %}
+    </div>
+</div>
+{% endblock %}

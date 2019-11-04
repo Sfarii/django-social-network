@@ -23,12 +23,6 @@ PROJECT_ROOT = dirname(DJANGO_ROOT)
 # the name of the whole site
 PROJECT_NAME = basename(DJANGO_ROOT)
 
-# collect static files here
-STATIC_ROOT = join(PROJECT_ROOT, 'static')
-
-# collect media files here
-MEDIA_ROOT = join(PROJECT_ROOT, 'media')
-
 # look for templates here
 # This is an internal setting, used in the TEMPLATES directive
 PROJECT_TEMPLATES = [
@@ -40,8 +34,29 @@ PROJECT_TRANSLATIONS = [
     join(PROJECT_ROOT, 'locale'),
 ]
 
-# add apps/ to the Python path
-sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
+# the URL for static files
+# https://docs.djangoproject.com/en/2.2/howto/static-files/
+STATIC_URL = '/static/'
+
+# collect static files here
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-root
+STATIC_ROOT = join(PROJECT_ROOT, 'public')
+
+# static files dirs here
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+STATICFILES_DIRS = [
+    join(PROJECT_ROOT, "static"),
+]
+
+# the URL for media files
+MEDIA_URL = '/media/'
+
+# collect media files here
+MEDIA_ROOT = join(PROJECT_ROOT, 'media')
+
+# Add our project to our pythonpath, this way we don't need to type our project
+# name in our dotted import paths:
+sys.path += [PROJECT_ROOT]
 
 # ##### ENV CONFIGURATION ############################
 
@@ -68,30 +83,39 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# ##### AUTH CONFIGURATION #########################
+
+LOGIN_REDIRECT_URL = '/blog/posts/'
+
 # ##### APPLICATION CONFIGURATION #########################
 
 # Application definition
 
 # the default apps
 INSTALLED_APPS = [
-    # Default Django apps:
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.forms',
-
     # Admin panel and documentation:
     'django.contrib.admin',
     'django.contrib.admindocs',
 
+    # channels app
+    'channels',
+
+    # Default Django apps:
+    'django.contrib.auth',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.contenttypes',
 
     # Useful template tags:
     'django.contrib.humanize',
 
     # custom apps
-    # 'apps.blog'
+    'apps.core',
+    'apps.authentication',
+    'apps.account',
+    'apps.blog',
+    'apps.chat'
 ]
 
 # the base middleware config
@@ -119,13 +143,12 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
+                'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages'
-            ],
+            ]
         },
     },
 ]
-
-FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -151,12 +174,17 @@ WSGI_APPLICATION = '%s.wsgi.application' % PROJECT_NAME
 # the root URL configuration
 ROOT_URLCONF = '%s.urls' % PROJECT_NAME
 
-# the URL for static files
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-STATIC_URL = '/static/'
+# Channels
+ASGI_APPLICATION = '%s.routing.application' % PROJECT_NAME
 
-# the URL for media files
-MEDIA_URL = '/media/'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # ##### DATABASE CONFIGURATION ############################
 

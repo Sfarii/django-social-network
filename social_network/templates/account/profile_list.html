@@ -1,0 +1,88 @@
+{% extends "account/base.html" %}
+{% load i18n user_tags paginator_renderer static %}
+
+{% block title %}{% trans "Profiles" %}{% endblock %}
+
+{% load i18n %}
+
+{% block header_content %}
+<div class="col-lg-8 text-center">
+    <h1 class="display-3 text-white">{% trans "Find people's" %}</h1>
+    <h3 class="text-white">{% trans "By addresses, phone numbers, etc ..." %}</h3>
+</div>
+<div class="col-lg-8 pt-4">
+    <form action="{% url 'post_index' %}">
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text input-group-text-search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input type="text" name="search" placeholder="{% trans 'Search ...' %}" class="form-control form-search">
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block container %}
+<div class="row mt--200">
+    {% for profile in profile_list %}
+        <div class="col-lg-4 col-md-6 mb-5">
+            <div class="card card-profile shadow card-lift--hover" data-background="cover">
+                <img class="img pattern pattern-top" src="{% static 'img/ill/p2.svg' %}" alt="cover">
+                <div class="card-header">
+                    <div class="card-avatar">
+                        <a href="javascript:;">
+                            <img class="img img-raised rounded-circle" src="{% user_avatar profile.user size=180 %}">
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="text-center">
+                        <h5 class="h5 mt-5">
+                            {{ profile.user.get_full_name }}<span class="font-weight-light">, {{ profile.age|default:'∞' }}</span>
+                        </h5>
+                        <div class="font-weight-300">
+                            <i class="ni ni-mobile-button mr-2"></i> {{ profile.phone|default:'No phone number provided' }}
+                        </div>
+                        <div class="font-weight-300">
+                            <i class="ni ni-square-pin mr-2"></i>{{ profile.address|default:'No address provided' }}
+                        </div>
+                    </div>
+                    <div class="card-profile-stats d-flex justify-content-center">
+                        <div>
+                            <span class="heading">{{ profile.followers.all|length }}</span>
+                            <span class="description">{% trans "Followers" %}</span>
+                        </div>
+                        <div>
+                            <span class="heading">{{ profile.posts.all|default:'0' }}</span>
+                            <span class="description">{% trans "Posts" %}</span>
+                        </div>
+                        <div>
+                            <span class="heading">{{ profile.followed.all|length }}</span>
+                            <span class="description">{% trans "Followed" %}</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'profile' username=profile.user.username %}" class="btn btn-lg btn-primary btn-block">{% trans "View profile" %}</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="card card-lift--hover">
+                <div class="card-body text-center">
+                    <img class="col-3" src="{% static 'img/ill/no-post.svg' %}">
+                    <h3 class="pt-4">{% trans "Oops! No Profile Found" %}</h3>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% if profile_list.count > 0 %}
+        <div class="col-12 border-top">
+            {% paginator_render page_obj %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

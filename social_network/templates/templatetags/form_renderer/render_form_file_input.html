@@ -1,0 +1,48 @@
+{% load i18n static %}
+<div class="upload-zone">
+    <script>
+      function readURL(input, img) {
+         if (input.files && input.files[0]) {
+           var reader = new FileReader();
+           reader.onload = function(e) {
+             img.setAttribute('src', e.target.result);
+           }
+           reader.readAsDataURL(input.files[0]);
+         }
+       }
+       function {{ fn_name }} {
+            const input = document.getElementById('{{ input_id }}');
+            readURL(input, document.getElementById("fileinput-preview-{{ input_id }}"));
+        }
+    </script>
+        <div class="text-center">
+            <div class="fileinput text-center fileinput-new">
+                <div class="fileinput-new big-thumbnail" id="scroll-bar-style">
+                    <img id="fileinput-preview-{{ input_id }}" class="js-input-preview"
+                         src="{% if value and value.url %}{{ value.url }}{% else %}{% static 'img/icons/upload_placeholder.png' %}{% endif %}">
+                </div>
+                <div class="fileinput-preview fileinput-exists thumbnail" style=""></div>
+                {% if value and value.url %}
+                <div class="align-items-center">
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input class="custom-control-input" type="checkbox"
+                               name="{{ context.widget.checkbox_name }}"
+                               id="{{ context.widget.checkbox_id }}">
+                        <label class="custom-control-label pt-1" for="{{ context.widget.checkbox_id }}">{{ context.widget.clear_checkbox_label }}</label>
+                    </div>
+                </div>
+                {% endif %}
+                <div>
+                    <span class="btn btn-raised btn-round btn-primary btn-file btn-sm mx-auto">
+                    <span class="fileinput-new">{{ context.widget.input_text }}</span>
+                        <input id="{{ input_id }}" type="{{ context.widget.type }}" name="{{ context.widget.name }}" {% for name, value in context.widget.attrs.items %}{% if value is not False %} {{ name }}{% if value is not True %}="{{ value|stringformat:'s' }}" {% endif %}{% endif %}{% endfor %}>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            {% if errors %}
+            {{ errors }}
+            {% endif %}
+        </div>
+</div>

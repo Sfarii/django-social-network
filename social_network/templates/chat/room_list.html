@@ -1,0 +1,82 @@
+{% extends "chat/base.html" %}
+{% load paginator_renderer i18n user_tags static form_renderer %}
+
+{% block title %}{% trans "Room List" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-10 text-center">
+    <h1 class="display-3 text-white">{% trans "Chat Room's" %}</h1>
+    <h3 class="text-white">{% trans "The best ideas start as conversations" %}</h3>
+    <div class="row pt-4">
+        <div class="col-lg-8">
+            <form action="{% url 'list_rooms' %}">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text input-group-text-search">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <input type="text" name="search" value="{{ search_key_word|default:'' }}"
+                               placeholder="{% trans 'Search for chat room' %}" class="form-control form-search">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <div class="btn-wrapper">
+                <a href="{% url 'create_room' %}" class="btn btn-info btn-icon">
+                    <span class="btn-inner--icon"><i class="ni ni-ruler-pencil"></i></span>
+                    <span class="btn-inner--text">{% trans "Create a chat room" %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row mt--200">
+    {% for room in room_list %}
+    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mb-4">
+        <div class="card card-stretch shadow">
+            <div class="card-body text-center p-4">
+                <a href="javascript:;">
+                    <img src="{{ room.avatar.url }}" alt="Circle image" class="img-fluid rounded-circle shadow img-size">
+                </a>
+                <h4 class="card-title mt-3 mb-0">{{ room.name|truncatechars:20|title }}</h4>
+                <p class="card-message">{{ room.get_last_message.body|default:'Write a message ...'|truncatechars:20 }}</p>
+                <h5 class="card-title mt-4">{% trans "Members" %}</h5>
+                <div class="avatar-group">
+                    {% for participant in room.participants.all %}
+                    <a href="{% url 'profile' username=participant.username %}" class="avatar avatar-lg rounded-circle" data-toggle="tooltip"
+                       data-original-title="{{ participant.get_full_name }}">
+                        <img alt="Image placeholder" src="{% user_avatar participant size=180 %}">
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="pt-4">
+                    <a href="{% url 'detail_room' slug=room.slug %}" class="btn btn-lg btn-primary btn-block">{% trans "Enter the Room" %}</a>
+                    <a href="{% url 'delete_room' slug=room.slug %}" class="btn btn-lg btn-danger btn-block">{% trans "Delete the Room" %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card shadow card-lift--hover">
+            <div class="card-body text-center">
+                <img class="col-3" src="{% static 'img/ill/no-post.svg' %}">
+                <h3 class="pt-4">{% trans "Oops! No Room Found" %}</h3>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if room_list.count > 0 %}
+    <div class="col-12 pt-3">
+        <hr>
+        {% paginator_render page_obj %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

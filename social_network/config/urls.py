@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path, re_path, include
+from django.urls import path, re_path, include, reverse_lazy
 from django.conf import settings
 from django.contrib import admin
 
@@ -22,22 +22,34 @@ from django.views.generic.base import RedirectView, TemplateView
 
 urlpatterns = [
 
-    # Accounts URLs
+    # Auth app URLs
+    path('auth/', include('apps.authentication.urls')),
+
+    path('', RedirectView.as_view(url=reverse_lazy('login'))),
+
+    # Account app URLs
+    path('account/', include('apps.account.urls')),
+
+    # blog app URLS
+    path('blog/', include('apps.blog.urls')),
+
+    # chat app URLS
+    path('chat/', include('apps.chat.urls')),
 
     # Root-level redirects for common browser requests
-    re_path(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/compressed/favicon.ico'), name='favicon.ico'),
-    re_path(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots.txt'),
+    path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'img/brand/favicon.png'), name='favicon.ico'),
+    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots.txt'),
 
     # Admin URLs
-    re_path(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    re_path(r'^admin/', admin.site.urls),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
     urlpatterns += [
         # Testing 404 and 500 error pages
-        re_path(r'^404/$', TemplateView.as_view(template_name='404.html'), name='404'),
-        re_path(r'^500/$', TemplateView.as_view(template_name='500.html'), name='500'),
+        path('404/', TemplateView.as_view(template_name='404.html'), name='404'),
+        path('500/', TemplateView.as_view(template_name='500.html'), name='500'),
     ]
 
     try:
@@ -46,7 +58,7 @@ if settings.DEBUG:
 
         import debug_toolbar
         urlpatterns += [
-            re_path(r'^__debug__/', include(debug_toolbar.urls))
+            re_path('__debug__/', include(debug_toolbar.urls))
         ]
 
     # Should only occur when debug mode is on for production testing

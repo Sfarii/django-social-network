@@ -1,0 +1,18 @@
+{% extends "blog/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Details Post" %}{% endblock %}
+
+{% load i18n %}
+
+{% block content %}
+    {% include 'includes/_post_detail.html' %}
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'js/post.min.js' %}"></script>
+<script type="text/javascript">
+    new PostSocket($(document));
+</script>
+{% endblock %}

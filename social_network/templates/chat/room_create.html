@@ -1,0 +1,85 @@
+{% extends "chat/base.html" %}
+{% load i18n user_tags static form_renderer %}
+
+{% block title %}{% trans "Create Room" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-10 text-center">
+    <h1 class="display-3 text-white">{% trans "Create Chat room" %}</h1>
+    <h3 class="text-white">{% trans "Most people are nice and just want to have a chat." %}</h3>
+</div>
+{% endblock %}
+
+{% block stylesheet %}
+{{ block.super }}
+<!-- multi-select -->
+<link href="{% static 'vendor/multi-select/css/multi-select.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-body mt-4">
+        {% form_start 'create_room' %}
+
+        {% form_error form %}
+
+        {% avatar_form_field form.avatar %}
+
+        {% form_field form.name %}
+
+        {% form_field form.participants class='searchable' %}
+
+        {% form_button 'Save changes' 'btn btn-primary mt-4' %}
+        {% form_button 'Cancel' 'btn btn-danger mt-4' 'reset' %}
+        {% form_end %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<!-- multi-select -->
+<script src="{% static 'vendor/multi-select/js/jquery.multi-select.js' %}"></script>
+<script src="{% static 'vendor/multi-select/js/jquery.quicksearch.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    $('.searchable').multiSelect({
+          selectableHeader: "<input type='text' class='form-control search-input mb-2' autocomplete='off' placeholder='{% trans "Search" %}'>",
+          selectionHeader: "<input type='text' class='form-control search-input mb-2' autocomplete='off' placeholder='{% trans "Search" %}'>",
+          afterInit: function (ms) {
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selection.ms-selected';
+                console.log(selectableSearchString);
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                    .on('keydown', function (e) {
+                        if (e.which === 40) {
+                            that.$selectableUl.focus();
+                            return false;
+                        }
+                    });
+                console.log(selectionSearchString);
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                    .on('keydown', function (e) {
+                        if (e.which == 40) {
+                            that.$selectionUl.focus();
+                            return false;
+                        }
+                    });
+            },
+            afterSelect: function () {
+                this.qs1.cache();
+                this.qs2.cache();
+            },
+            afterDeselect: function () {
+                this.qs1.cache();
+                this.qs2.cache();
+            }
+        });
+        });
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+<div class="form-group {{ group_class }}">
+    <div class="input-group input-group-alternative">
+        <div class="input-group-prepend">
+            <span class="input-group-text">
+                <i class="{{ add_ons }}"></i>
+            </span>
+        </div>
+        {{ field }}
+    </div>
+
+    {% if errors %}
+    <div class="form-errors">
+        {{ errors }}
+    </div>
+    {% endif %}
+
+    {% if help_text %}
+    <div class="form-helper">
+        {{ help_text }}
+    </div>
+    {% endif %}
+</div>

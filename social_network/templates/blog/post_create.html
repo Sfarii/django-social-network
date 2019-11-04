@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% load i18n user_tags form_renderer %}
+
+{% block title %}{% trans "Create Post" %}{% endblock %}
+
+{% block header_content %}
+<div class="col-lg-10 text-center">
+    <h1 class="display-3 text-white">{% trans "Create Post" %}</h1>
+    <h3 class="text-white">{% trans "Express your thoughts" %}</h3>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow pt-4">
+    <div class="card-body">
+        {% form_start 'post_create' %}
+
+        {% form_error form %}
+
+        {% file_form_field form.cover %}
+
+        {% form_field form.title %}
+
+        {% form_field form.status %}
+
+        {% form_field form.body %}
+
+        {% form_button 'Save changes' 'btn btn-primary mt-4' %}
+        {% form_button 'Cancel' 'btn btn-danger mt-4' 'reset' %}
+        {% form_end %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "chat/base.html" %}
+{% load i18n user_tags form_renderer %}
+
+{% block title %}{% trans "Delete Room messages" %}{% endblock %}
+
+{% load i18n %}
+
+{% block header_content %}
+<div class="col-lg-10 text-center">
+    <h1 class="display-3 text-white">{% trans "Delete the Room" %}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <h5 class="h3 mb-0">{{ room.name }}</h5>
+            </div>
+            <div class="col-4 text-right ml-auto">
+                <a href="{% url 'detail_room' slug=room.slug %}" role="button" class="btn btn-sm btn-info btn-icon">
+                    <span class="btn-inner--icon icon-big text-white"><i class="ni ni-chat-round"></i></span>
+                    <span class="btn-inner--text text-white">{% trans "Back to room" %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% form_start 'delete_room' slug=room.slug %}
+
+        {% form_error form %}
+
+        <p>{% trans "Are you sure to delete this room ?" %}</p>
+        <p>{% trans "This room will be deleted immediately. You can't undo this action." %}</p>
+
+        {% form_button 'Delete' 'btn btn-danger mt-4' %}
+
+        {% form_end %}
+    </div>
+</div>
+{% endblock %}
